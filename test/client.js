@@ -204,7 +204,7 @@ describe('lib/client', function () {
 
       await this.client.newNonce()
       await this.client.newAccount('foo@bar.com')
-      const { authzUrls, domains, finalizeUrl, orderUrl } = await this.client.newOrder('bar.com')
+      const { authzUrls } = await this.client.newOrder('bar.com')
       this.authzUrls = authzUrls
     })
 

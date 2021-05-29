@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "lint": "eslint index.js lib/ test/",
     "test": "NODE_ENV=test nyc mocha --exit"
   },
   "keywords": [

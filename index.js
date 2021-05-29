@@ -10,7 +10,7 @@ const main = async function () {
 
   await client.newNonce()
   await client.newAccount('foo@bar.com')
-  const { authzUrls, domains, finalizeUrl, orderUrl } = await client.newOrder('bar.com')
+  const { authzUrls } = await client.newOrder('bar.com')
   const challenge = await client.authz(authzUrls[0])
 
   await client.respondChallenge(challenge)
