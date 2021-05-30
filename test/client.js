@@ -244,8 +244,6 @@ describe('lib/client', function () {
       assert.strictEqual(typeof result.challenge.validated, 'string')
       assert.strictEqual(result.domain, process.env.domain)
       assert.strictEqual(result.status, 'valid')
-
-      console.log(result)
     })
   })
 })

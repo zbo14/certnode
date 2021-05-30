@@ -15,7 +15,8 @@ const main = async function () {
   const { challenge } = await client.authz(authzUrls[0])
 
   await client.respondChallenge(challenge)
-  await client.authz(authzUrls[0])
+  const result = await client.authz(authzUrls[0])
+  console.log(result)
 }
 
 main().catch(err => {
