@@ -220,31 +220,32 @@ describe('lib/client', function () {
     })
   })
 
-  // describe('#respondChallenge()', () => {
-  //   beforeEach(async () => {
-  //     await Promise.all([
-  //       this.client.directory(),
-  //       this.client.generateKeyPair()
-  //     ])
+  describe('#respondChallenge()', () => {
+    beforeEach(async () => {
+      await Promise.all([
+        this.client.directory(),
+        this.client.generateKeyPair()
+      ])
 
-  //     await this.client.newNonce()
-  //     await this.client.newAccount('foo@bar.com')
-  //     const { authzUrls } = await this.client.newOrder('bar.com')
-  //     this.challenge = await this.client.authz(authzUrls[0])
-  //   })
+      await this.client.newNonce()
+      await this.client.newAccount('foo@bar.com')
+      const { authzUrls } = await this.client.newOrder(process.env.domain)
+      const { challenge } = await this.client.authz(authzUrls[0])
+      this.challenge = challenge
+    })
 
-  //   it('completes an authorization', async () => {
-  //     const result = await this.client.respondChallenge(this.challenge)
+    it('responds to a challenge', async () => {
+      const result = await this.client.respondChallenge(this.challenge)
 
-  //     assert.strictEqual(result.challenge.type, 'http-01')
-  //     assert.strictEqual(result.challenge.status, 'valid')
-  //     assert.strictEqual(result.challenge.token, this.challenge.token)
-  //     assert.strictEqual(result.challenge.url, this.challenge.url)
-  //     assert.strictEqual(typeof result.challenge.validated, 'string')
-  //     assert.strictEqual(result.domain, 'bar.com')
-  //     assert.strictEqual(result.status, 'valid')
+      assert.strictEqual(result.challenge.type, 'http-01')
+      assert.strictEqual(result.challenge.status, 'valid')
+      assert.strictEqual(result.challenge.token, this.challenge.token)
+      assert.strictEqual(result.challenge.url, this.challenge.url)
+      assert.strictEqual(typeof result.challenge.validated, 'string')
+      assert.strictEqual(result.domain, process.env.domain)
+      assert.strictEqual(result.status, 'valid')
 
-  //     console.log(result)
-  //   })
-  // })
+      console.log(result)
+    })
+  })
 })

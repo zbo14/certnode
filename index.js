@@ -12,7 +12,7 @@ const main = async function () {
   await client.newNonce()
   await client.newAccount(email)
   const { authzUrls } = await client.newOrder(domain)
-  const challenge = await client.authz(authzUrls[0])
+  const { challenge } = await client.authz(authzUrls[0])
 
   await client.respondChallenge(challenge)
   await client.authz(authzUrls[0])
