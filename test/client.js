@@ -209,16 +209,18 @@ describe('lib/client', function () {
     })
 
     it('completes an authorization', async () => {
-      const challenge = await this.client.authz(this.authzUrls[0])
+      const result = await this.client.authz(this.authzUrls[0])
 
-      assert.strictEqual(challenge.type, 'http-01')
-      assert.strictEqual(challenge.status, 'pending')
-      assert.strictEqual(typeof challenge.token, 'string')
-      assert(challenge.url.startsWith('https://acme-staging-v02.api.letsencrypt.org/acme/chall-v3'))
+      assert.strictEqual(result.challenge.type, 'http-01')
+      assert.strictEqual(result.challenge.status, 'pending')
+      assert.strictEqual(typeof result.challenge.token, 'string')
+      assert(result.challenge.url.startsWith('https://acme-staging-v02.api.letsencrypt.org/acme/chall-v3'))
+      assert.strictEqual(result.domain, 'bar.com')
+      assert.strictEqual(result.status, 'pending')
     })
   })
 
-  // describe.only('#respondChallenge()', () => {
+  // describe('#respondChallenge()', () => {
   //   beforeEach(async () => {
   //     await Promise.all([
   //       this.client.directory(),
@@ -227,37 +229,22 @@ describe('lib/client', function () {
 
   //     await this.client.newNonce()
   //     await this.client.newAccount('foo@bar.com')
-  //     const { authzUrls, domains, finalizeUrl, orderUrl } = await this.client.newOrder('bar.com')
+  //     const { authzUrls } = await this.client.newOrder('bar.com')
   //     this.challenge = await this.client.authz(authzUrls[0])
   //   })
 
   //   it('completes an authorization', async () => {
-  //     const challenge = await this.client.respondChallenge(this.challenge)
+  //     const result = await this.client.respondChallenge(this.challenge)
 
-  //     assert.strictEqual(challenge.type, 'http-01')
-  //     assert.strictEqual(challenge.status, 'pending')
-  //     assert.strictEqual(typeof challenge.token, 'string')
-  //     assert(challenge.url.startsWith('https://acme-staging-v02.api.letsencrypt.org/acme/chall-v3'))
-  //   })
-  // })
+  //     assert.strictEqual(result.challenge.type, 'http-01')
+  //     assert.strictEqual(result.challenge.status, 'valid')
+  //     assert.strictEqual(result.challenge.token, this.challenge.token)
+  //     assert.strictEqual(result.challenge.url, this.challenge.url)
+  //     assert.strictEqual(typeof result.challenge.validated, 'string')
+  //     assert.strictEqual(result.domain, 'bar.com')
+  //     assert.strictEqual(result.status, 'valid')
 
-  // describe('#finalizeOrder()', () => {
-  //   beforeEach(async () => {
-  //     await Promise.all([
-  //       this.client.directory(),
-  //       this.client.generateKeyPair()
-  //     ])
-
-  //     await this.client.newNonce()
-  //     await this.client.newAccount('foo@bar.com')
-  //     const { finalizeUrl, orderUrl } = await this.client.newOrder('bar.com')
-  //     this.finalizeUrl = finalizeUrl
-  //   })
-
-  //   it('finalizes order', async () => {
-  //     const { certifcateUrl } = await this.client.finalizeOrder(this.finalizeUrl, 'bar.com', 'foo@bar.com')
-
-  //     assert(/^https:\/\/acme-staging-v02\.api\.letsencrypt\.org\/acme\/certificate\/\d+\/\d+$/.test(certificateUrl))
+  //     console.log(result)
   //   })
   // })
 })
