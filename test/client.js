@@ -229,15 +229,17 @@ describe('lib/client', function () {
 
       await this.client.newNonce()
       await this.client.newAccount('foo@bar.com')
+
       const { authzUrls } = await this.client.newOrder(process.env.domain)
       const { challenge } = await this.client.authz(authzUrls[0])
+
       this.authzUrl = authzUrls[0]
       this.challenge = challenge
     })
 
     it('completes a challenge', async () => {
       await this.client.completeChallenge(this.challenge)
-      const result = await this.client.authz()
+      const result = await this.client.pollAuthz(this.authzUrl)
 
       assert.strictEqual(result.challenge.type, 'http-01')
       assert.strictEqual(result.challenge.status, 'valid')
@@ -246,6 +248,32 @@ describe('lib/client', function () {
       assert.strictEqual(typeof result.challenge.validated, 'string')
       assert.strictEqual(result.domain, process.env.domain)
       assert.strictEqual(result.status, 'valid')
+    })
+  })
+
+  describe('#finalizeOrder()', () => {
+    beforeEach(async () => {
+      await Promise.all([
+        this.client.directory(),
+        this.client.generateKeyPair()
+      ])
+
+      await this.client.newNonce()
+      await this.client.newAccount('foo@bar.com')
+
+      const { authzUrls, finalizeUrl } = await this.client.newOrder(process.env.domain)
+      const { challenge } = await this.client.authz(authzUrls[0])
+
+      this.authzUrl = authzUrls[0]
+      this.challenge = challenge
+      this.finalizeUrl = finalizeUrl
+
+      await this.client.completeChallenge(this.challenge)
+      await this.client.authz(this.authzUrl)
+    })
+
+    it('finalizes the order', async () => {
+      await this.client.finalizeOrder(this.finalizeUrl, process.env.domain, 'foo@bar.com')
     })
   })
 })
