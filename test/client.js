@@ -220,7 +220,7 @@ describe('lib/client', function () {
     })
   })
 
-  describe('#respondChallenge()', () => {
+  describe('#completeChallenge()', () => {
     beforeEach(async () => {
       await Promise.all([
         this.client.directory(),
@@ -231,11 +231,13 @@ describe('lib/client', function () {
       await this.client.newAccount('foo@bar.com')
       const { authzUrls } = await this.client.newOrder(process.env.domain)
       const { challenge } = await this.client.authz(authzUrls[0])
+      this.authzUrl = authzUrls[0]
       this.challenge = challenge
     })
 
-    it('responds to a challenge', async () => {
-      const result = await this.client.respondChallenge(this.challenge)
+    it('completes a challenge', async () => {
+      await this.client.completeChallenge(this.challenge)
+      const result = await this.client.authz()
 
       assert.strictEqual(result.challenge.type, 'http-01')
       assert.strictEqual(result.challenge.status, 'valid')
