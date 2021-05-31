@@ -1,10 +1,10 @@
 {
   "name": "certnode",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.0.0",
+  "description": "Generate Let's Encrypt certificates for your domains",
+  "main": "lib/index.js",
   "scripts": {
-    "lint": "eslint index.js lib/ test/",
+    "lint": "eslint examples/ lib/ test/",
     "test": "NODE_ENV=test nyc mocha --exit"
   },
   "keywords": [
