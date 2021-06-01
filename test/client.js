@@ -290,7 +290,7 @@ describe('lib/client', function () {
       assert.strictEqual(typeof result.certificate, 'string')
       assert(result.certificate.startsWith('-----BEGIN CERTIFICATE-----\n'))
       assert(result.certificate.endsWith('-----END CERTIFICATE-----\n'))
-      assert(result.accountPrivateKey instanceof crypto.KeyObject)
+      assert(result.privateKey instanceof crypto.KeyObject)
     })
   })
 })
