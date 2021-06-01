@@ -74,7 +74,7 @@ await anotherClient.importAccountKeyPair('<directory>', '[passphrase]')
 /* generate certificate with `anotherClient` */
 ```
 
-### Import certificate + private key and initialize HTTPS server
+### Import certificate + private key for HTTPS server
 
 ```js
 const [certificate, privateKeyData] = await Promise.all([
