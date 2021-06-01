@@ -78,8 +78,8 @@ await anotherClient.importAccountKeyPair('<directory>', '[passphrase]')
 
 ```js
 const [certificate, privateKeyData] = await Promise.all([
-  fs.promises.writeFile('/path/to/certificate'),
-  fs.promises.writeFile('/path/to/privateKey')
+  fs.promises.readFile('/path/to/certificate', 'utf8'),
+  fs.promises.readFile('/path/to/privateKey', 'utf8')
 ])
 
 // If you previously exported with passphrase, provide the same passphrase.
