@@ -237,6 +237,10 @@ describe('lib/client', function () {
       this.challenge = challenge
     })
 
+    afterEach(() => {
+      this.client.server?.close()
+    })
+
     it('completes a challenge', async () => {
       await this.client.completeChallenge(this.challenge)
       const result = await this.client.pollAuthz(this.authzUrl)
@@ -270,6 +274,10 @@ describe('lib/client', function () {
 
       await this.client.completeChallenge(this.challenge)
       await this.client.pollAuthz(this.authzUrl)
+    })
+
+    afterEach(() => {
+      this.client.server?.close()
     })
 
     it('finalizes the order and fetches certificate', async () => {
