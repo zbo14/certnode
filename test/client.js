@@ -36,7 +36,7 @@ describe('lib/client', function () {
     })
   })
 
-  describe('#exportKeyPair()', () => {
+  describe('#exportAccountKeyPair()', () => {
     beforeEach(async () => {
       await this.client.generateAccountKeyPair()
     })
@@ -49,21 +49,21 @@ describe('lib/client', function () {
     })
 
     it('exports keypair to directory', async () => {
-      await this.client.exportKeyPair(keysDir)
+      await this.client.exportAccountKeyPair(keysDir)
 
       await fs.promises.access(publicKeyFile, fs.constants.F_OK)
       await fs.promises.access(privateKeyFile, fs.constants.F_OK)
     })
 
     it('encrypts private key with passphrase', async () => {
-      await this.client.exportKeyPair(keysDir, 'foobar')
+      await this.client.exportAccountKeyPair(keysDir, 'foobar')
 
       await fs.promises.access(publicKeyFile, fs.constants.F_OK)
       await fs.promises.access(privateKeyFile, fs.constants.F_OK)
     })
   })
 
-  describe('#importKeyPair()', () => {
+  describe('#importAccountKeyPair()', () => {
     beforeEach(async () => {
       await this.client.generateAccountKeyPair()
 
@@ -82,8 +82,8 @@ describe('lib/client', function () {
     })
 
     it('imports keypair from directory', async () => {
-      await this.client.exportKeyPair(keysDir)
-      await this.client.importKeyPair(keysDir)
+      await this.client.exportAccountKeyPair(keysDir)
+      await this.client.importAccountKeyPair(keysDir)
 
       assert.deepStrictEqual(this.client.publicJwk, this.publicJwk)
       assert.deepStrictEqual(this.client.privateJwk, this.privateJwk)
@@ -93,8 +93,8 @@ describe('lib/client', function () {
     })
 
     it('decrypts private key with passphrase', async () => {
-      await this.client.exportKeyPair(keysDir, 'foobar')
-      await this.client.importKeyPair(keysDir, 'foobar')
+      await this.client.exportAccountKeyPair(keysDir, 'foobar')
+      await this.client.importAccountKeyPair(keysDir, 'foobar')
 
       assert.deepStrictEqual(this.client.publicJwk, this.publicJwk)
       assert.deepStrictEqual(this.client.privateJwk, this.privateJwk)
@@ -104,10 +104,10 @@ describe('lib/client', function () {
     })
 
     it('errors if passphrase incorrect', async () => {
-      await this.client.exportKeyPair(keysDir, 'foobar')
+      await this.client.exportAccountKeyPair(keysDir, 'foobar')
 
       try {
-        await this.client.importKeyPair(keysDir, 'foobaz')
+        await this.client.importAccountKeyPair(keysDir, 'foobaz')
         assert.fail('Should reject')
       } catch ({ message }) {
         assert.strictEqual(message, 'Failed to load private key')
@@ -280,7 +280,9 @@ describe('lib/client', function () {
       )
 
       assert.strictEqual(typeof result.certificate, 'string')
-      assert.strictEqual(typeof result.privateKey, 'string')
+      assert(result.certificate.startsWith('-----BEGIN CERTIFICATE-----'))
+      assert(result.certificate.endsWith('-----END CERTIFICATE-----'))
+      assert.strictEqual(result.privateKey instanceof crypto.KeyObject)
     })
   })
 })
