@@ -1,6 +1,6 @@
 'use strict'
 
-const Client = require('../lib/client')
+const { Client } = require('./lib')
 
 const { domain, email } = process.env
 

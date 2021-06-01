@@ -4,7 +4,7 @@
   "description": "Generate Let's Encrypt certificates for your domains",
   "main": "lib/index.js",
   "scripts": {
-    "lint": "eslint examples/ lib/ test/",
+    "lint": "eslint example.js lib/ test/",
     "test": "NODE_ENV=test nyc mocha --exit"
   },
   "keywords": [

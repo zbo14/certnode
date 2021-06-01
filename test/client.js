@@ -24,9 +24,9 @@ describe('lib/client', function () {
     await fs.promises.rmdir(keysDir, { recursive: true })
   })
 
-  describe('#generateKeyPair()', () => {
+  describe('#generateAccountKeyPair()', () => {
     it('generates keypair', async () => {
-      await this.client.generateKeyPair()
+      await this.client.generateAccountKeyPair()
 
       assert(this.client.publicKey instanceof crypto.KeyObject)
       assert(this.client.privateKey instanceof crypto.KeyObject)
@@ -38,7 +38,7 @@ describe('lib/client', function () {
 
   describe('#exportKeyPair()', () => {
     beforeEach(async () => {
-      await this.client.generateKeyPair()
+      await this.client.generateAccountKeyPair()
     })
 
     afterEach(async () => {
@@ -65,7 +65,7 @@ describe('lib/client', function () {
 
   describe('#importKeyPair()', () => {
     beforeEach(async () => {
-      await this.client.generateKeyPair()
+      await this.client.generateAccountKeyPair()
 
       this.publicKey = this.client.publicKey
       this.privateKey = this.client.privateKey
@@ -142,7 +142,7 @@ describe('lib/client', function () {
     beforeEach(async () => {
       await Promise.all([
         this.client.directory(),
-        this.client.generateKeyPair()
+        this.client.generateAccountKeyPair()
       ])
 
       await this.client.newNonce()
@@ -174,7 +174,7 @@ describe('lib/client', function () {
     beforeEach(async () => {
       await Promise.all([
         this.client.directory(),
-        this.client.generateKeyPair()
+        this.client.generateAccountKeyPair()
       ])
 
       await this.client.newNonce()
@@ -199,7 +199,7 @@ describe('lib/client', function () {
     beforeEach(async () => {
       await Promise.all([
         this.client.directory(),
-        this.client.generateKeyPair()
+        this.client.generateAccountKeyPair()
       ])
 
       await this.client.newNonce()
@@ -224,7 +224,7 @@ describe('lib/client', function () {
     beforeEach(async () => {
       await Promise.all([
         this.client.directory(),
-        this.client.generateKeyPair()
+        this.client.generateAccountKeyPair()
       ])
 
       await this.client.newNonce()
@@ -255,25 +255,32 @@ describe('lib/client', function () {
     beforeEach(async () => {
       await Promise.all([
         this.client.directory(),
-        this.client.generateKeyPair()
+        this.client.generateAccountKeyPair()
       ])
 
       await this.client.newNonce()
       await this.client.newAccount('foo@bar.com')
 
       const { authzUrls, finalizeUrl } = await this.client.newOrder(process.env.domain)
-      const { challenge } = await this.client.authz(authzUrls[0])
-
       this.authzUrl = authzUrls[0]
-      this.challenge = challenge
       this.finalizeUrl = finalizeUrl
 
+      const { challenge } = await this.client.authz(this.authzUrl)
+      this.challenge = challenge
+
       await this.client.completeChallenge(this.challenge)
-      await this.client.authz(this.authzUrl)
+      await this.client.pollAuthz(this.authzUrl)
     })
 
-    it('finalizes the order', async () => {
-      await this.client.finalizeOrder(this.finalizeUrl, process.env.domain, 'foo@bar.com')
+    it('finalizes the order and fetches certificate', async () => {
+      const result = await this.client.finalizeOrder(
+        this.finalizeUrl,
+        process.env.domain,
+        'foo@bar.com'
+      )
+
+      assert.strictEqual(typeof result.certificate, 'string')
+      assert.strictEqual(typeof result.privateKey, 'string')
     })
   })
 })
