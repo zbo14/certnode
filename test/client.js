@@ -28,11 +28,11 @@ describe('lib/client', function () {
     it('generates keypair', async () => {
       await this.client.generateAccountKeyPair()
 
-      assert(this.client.publicKey instanceof crypto.KeyObject)
-      assert(this.client.privateKey instanceof crypto.KeyObject)
+      assert(this.client.accountPublicKey instanceof crypto.KeyObject)
+      assert(this.client.accountPrivateKey instanceof crypto.KeyObject)
 
-      assert.strictEqual(this.client.publicJwk.constructor.name, 'Object')
-      assert.strictEqual(this.client.privateJwk.constructor.name, 'Object')
+      assert.strictEqual(this.client.accountPublicJwk.constructor.name, 'Object')
+      assert.strictEqual(this.client.accountPrivateJwk.constructor.name, 'Object')
     })
   })
 
@@ -67,11 +67,11 @@ describe('lib/client', function () {
     beforeEach(async () => {
       await this.client.generateAccountKeyPair()
 
-      this.publicKey = this.client.publicKey
-      this.privateKey = this.client.privateKey
+      this.accountPublicKey = this.client.accountPublicKey
+      this.accountPrivateKey = this.client.accountPrivateKey
 
-      this.publicJwk = this.client.publicJwk
-      this.privateJwk = this.client.privateJwk
+      this.accountPublicJwk = this.client.accountPublicJwk
+      this.accountPrivateJwk = this.client.accountPrivateJwk
     })
 
     afterEach(async () => {
@@ -85,22 +85,22 @@ describe('lib/client', function () {
       await this.client.exportAccountKeyPair(keysDir)
       await this.client.importAccountKeyPair(keysDir)
 
-      assert.deepStrictEqual(this.client.publicJwk, this.publicJwk)
-      assert.deepStrictEqual(this.client.privateJwk, this.privateJwk)
+      assert.deepStrictEqual(this.client.accountPublicJwk, this.accountPublicJwk)
+      assert.deepStrictEqual(this.client.accountPrivateJwk, this.accountPrivateJwk)
 
-      assert.deepStrictEqual(this.client.publicKey, this.publicKey)
-      assert.deepStrictEqual(this.client.privateKey, this.privateKey)
+      assert.deepStrictEqual(this.client.accountPublicKey, this.accountPublicKey)
+      assert.deepStrictEqual(this.client.accountPrivateKey, this.accountPrivateKey)
     })
 
     it('decrypts private key with passphrase', async () => {
       await this.client.exportAccountKeyPair(keysDir, 'foobar')
       await this.client.importAccountKeyPair(keysDir, 'foobar')
 
-      assert.deepStrictEqual(this.client.publicJwk, this.publicJwk)
-      assert.deepStrictEqual(this.client.privateJwk, this.privateJwk)
+      assert.deepStrictEqual(this.client.accountPublicJwk, this.accountPublicJwk)
+      assert.deepStrictEqual(this.client.accountPrivateJwk, this.accountPrivateJwk)
 
-      assert.deepStrictEqual(this.client.publicKey, this.publicKey)
-      assert.deepStrictEqual(this.client.privateKey, this.privateKey)
+      assert.deepStrictEqual(this.client.accountPublicKey, this.accountPublicKey)
+      assert.deepStrictEqual(this.client.accountPrivateKey, this.accountPrivateKey)
     })
 
     it('errors if passphrase incorrect', async () => {
@@ -110,7 +110,7 @@ describe('lib/client', function () {
         await this.client.importAccountKeyPair(keysDir, 'foobaz')
         assert.fail('Should reject')
       } catch ({ message }) {
-        assert.strictEqual(message, 'Failed to load private key')
+        assert.strictEqual(message, 'Failed to import private key')
       }
     })
   })
@@ -282,7 +282,7 @@ describe('lib/client', function () {
       assert.strictEqual(typeof result.certificate, 'string')
       assert(result.certificate.startsWith('-----BEGIN CERTIFICATE-----'))
       assert(result.certificate.endsWith('-----END CERTIFICATE-----'))
-      assert.strictEqual(result.privateKey instanceof crypto.KeyObject)
+      assert.strictEqual(result.accountPrivateKey instanceof crypto.KeyObject)
     })
   })
 })
