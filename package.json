@@ -10,12 +10,15 @@
   },
   "keywords": [
     "ACME",
+    "ACMEv2",
     "HTTP",
     "HTTPS",
-    "RFC 8555",
+    "RFC8555",
     "TLS",
     "certbot",
     "certificate",
+    "domain",
+    "domain name",
     "letsencrypt"
   ],
   "author": "Zachary Balder",
