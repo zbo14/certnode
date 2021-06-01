@@ -116,9 +116,20 @@ describe('lib/client', function () {
   })
 
   describe('#directory()', () => {
-    it('fetches directory listing', async () => {
-      await this.client.directory()
+    it('fetches fresh directory listing', async () => {
+      const result = await this.client.directory()
 
+      assert.strictEqual(result, true)
+      assert.strictEqual(this.client.newAccountUrl, 'https://acme-staging-v02.api.letsencrypt.org/acme/new-acct')
+      assert.strictEqual(this.client.newNonceUrl, 'https://acme-staging-v02.api.letsencrypt.org/acme/new-nonce')
+      assert.strictEqual(this.client.newOrderUrl, 'https://acme-staging-v02.api.letsencrypt.org/acme/new-order')
+    })
+
+    it('doesn\'t fetch multiple times', async () => {
+      await this.client.directory()
+      const result = await this.client.directory()
+
+      assert.strictEqual(result, false)
       assert.strictEqual(this.client.newAccountUrl, 'https://acme-staging-v02.api.letsencrypt.org/acme/new-acct')
       assert.strictEqual(this.client.newNonceUrl, 'https://acme-staging-v02.api.letsencrypt.org/acme/new-nonce')
       assert.strictEqual(this.client.newOrderUrl, 'https://acme-staging-v02.api.letsencrypt.org/acme/new-order')
@@ -131,8 +142,18 @@ describe('lib/client', function () {
     })
 
     it('receives replay nonce', async () => {
-      await this.client.newNonce()
+      const result = await this.client.newNonce()
 
+      assert.strictEqual(result, true)
+      assert(this.client.replayNonce)
+      assert.strictEqual(typeof this.client.replayNonce, 'string')
+    })
+
+    it('doesn\'t receive nonce multiple times', async () => {
+      await this.client.newNonce()
+      const result = await this.client.newNonce()
+
+      assert.strictEqual(result, false)
       assert(this.client.replayNonce)
       assert.strictEqual(typeof this.client.replayNonce, 'string')
     })
@@ -286,6 +307,17 @@ describe('lib/client', function () {
         process.env.domain,
         'foo@bar.com'
       )
+
+      assert.strictEqual(typeof result.certificate, 'string')
+      assert(result.certificate.startsWith('-----BEGIN CERTIFICATE-----\n'))
+      assert(result.certificate.endsWith('-----END CERTIFICATE-----\n'))
+      assert(result.privateKey instanceof crypto.KeyObject)
+    })
+  })
+
+  describe('#generateCertificate()', () => {
+    it('generates certificate given domain and email address', async () => {
+      const result = await this.client.generateCertificate(process.env.domain, 'foo@bar.com')
 
       assert.strictEqual(typeof result.certificate, 'string')
       assert(result.certificate.startsWith('-----BEGIN CERTIFICATE-----\n'))
