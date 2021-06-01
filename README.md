@@ -10,6 +10,8 @@ Generate [Let's Encrypt](https://letsencrypt.org/) certificates in Node!
 
 ### Generate a TLS certificate
 
+**Note:** you *must* control the domain you pass to `client.generateCertificate()` and allow inbound TCP traffic on port 80 (HTTP) in your firewall rules.
+
 ```js
 const { Client } = require('certnode')
 
