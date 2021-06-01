@@ -10,7 +10,7 @@ const publicKeyFile = path.join(keysDir, 'publicKey.pem')
 const privateKeyFile = path.join(keysDir, 'privateKey.pem')
 
 describe('lib/client', function () {
-  this.timeout(5e3)
+  this.timeout(10e3)
 
   before(async () => {
     await fs.promises.mkdir(keysDir)

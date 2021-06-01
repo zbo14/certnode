@@ -18,11 +18,7 @@ const main = async () => {
 
   await client.generateAccountKeyPair()
 
-  const { certificate, privateKey } = await client.generateCertificate(
-    '<domain>',
-    '<email>',
-    '[passphrase]'
-  )
+  const { certificate, privateKey } = await client.generateCertificate('<domain>', '<email>')
 
   // do something with certificate and privateKey
 }
@@ -32,6 +28,8 @@ main().catch(err => {
   process.exit(1)
 })
 ```
+
+TODO: more examples
 
 ## Resources
 
