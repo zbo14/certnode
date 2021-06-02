@@ -1,4 +1,4 @@
-const certnode = require('certnode')
+const certnode = require('./lib')
 const fs = require('fs')
 const https = require('https')
 const path = require('path')
