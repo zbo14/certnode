@@ -303,10 +303,14 @@ describe('lib/client', function () {
         'foo@bar.com'
       )
 
+      const privateKey = common.importPrivateKey(result.privateKeyData)
+
       assert.strictEqual(typeof result.certificate, 'string')
       assert(result.certificate.startsWith('-----BEGIN CERTIFICATE-----\n'))
       assert(result.certificate.endsWith('-----END CERTIFICATE-----\n'))
-      assert(result.privateKey instanceof crypto.KeyObject)
+      assert.strictEqual(typeof result.privateKeyData, 'string')
+      assert(privateKey instanceof crypto.KeyObject)
+      assert.strictEqual(privateKey.type, 'private')
     })
   })
 
@@ -317,11 +321,14 @@ describe('lib/client', function () {
 
     it('generates certificate given domain and email address', async () => {
       const result = await this.client.generateCertificate(process.env.domain, 'foo@bar.com')
+      const privateKey = common.importPrivateKey(result.privateKeyData)
 
       assert.strictEqual(typeof result.certificate, 'string')
       assert(result.certificate.startsWith('-----BEGIN CERTIFICATE-----\n'))
       assert(result.certificate.endsWith('-----END CERTIFICATE-----\n'))
-      assert(result.privateKey instanceof crypto.KeyObject)
+      assert.strictEqual(typeof result.privateKeyData, 'string')
+      assert(privateKey instanceof crypto.KeyObject)
+      assert.strictEqual(privateKey.type, 'private')
     })
   })
 })
