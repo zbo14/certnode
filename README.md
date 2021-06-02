@@ -48,7 +48,7 @@ server.listen(443, '0.0.0.0')
 
 ```js
 // Account private key is encrypted with passphrase, if provided.
-await client.exportAccountKeypair('<directory>', '[passphrase]')
+await client.exportAccountKeyPair('<directory>', '[passphrase]')
 ```
 
 ### Write certificate + private key to filesystem
