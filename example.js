@@ -10,10 +10,27 @@ const {
   passphrase = ''
 } = process.env
 
-const certificateFile = path.join(dirname, 'certificate.pem')
+if (!domain) {
+  console.error('Must specify "domain"')
+  process.exit(1)
+}
+
+if (!email) {
+  console.error('Must specify "email"')
+  process.exit(1)
+}
+
+const accountDir = path.join(dirname, 'account')
+const domainDir = path.join(dirname, domain)
+
+const certificateFile = path.join(domainDir, 'certificate.pem')
+const privateKeyFile = path.join(domainDir, 'privateKey.pem')
 
 const main = async () => {
-  await fs.promises.mkdir(dirname).catch(() => {})
+  await Promise.all([
+    fs.promises.mkdir(accountDir, { recursive: true }).catch(() => {}),
+    fs.promises.mkdir(domainDir, { recursive: true }).catch(() => {})
+  ])
 
   const client = new certnode.Client()
 
@@ -38,14 +55,14 @@ const main = async () => {
 
     // Export the account keys and write them to files in a directory.
     // Account private key is encrypted with passphrase, if provided.
-    await client.exportAccountKeyPair(dirname, passphrase)
+    await client.exportAccountKeyPair(accountDir, passphrase)
     console.log('Exported account keys')
 
     // Export private key and write it + certificate to filesystem.
     // Certificate private key is encrypted with passphrase, if provided.
     await Promise.all([
       fs.promises.writeFile(certificateFile, certificate),
-      certnode.writeKeyToFile(dirname, privateKeyData, passphrase)
+      certnode.writeKeyToFile(privateKeyFile, privateKeyData, passphrase)
     ])
 
     console.log('Exported certificate and private key')
@@ -63,7 +80,7 @@ const main = async () => {
   // Later: import private key and certificate and initialize HTTPS server with them.
   const [certificate, privateKeyData] = await Promise.all([
     fs.promises.readFile(certificateFile, 'utf8'),
-    fs.promises.readFile(dirname, 'utf8')
+    fs.promises.readFile(privateKeyFile, 'utf8')
   ])
 
   console.log('Exported certificate and private key')

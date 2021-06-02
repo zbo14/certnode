@@ -6,6 +6,7 @@ const common = require('../../lib/common')
 
 const fixturesDir = path.resolve(__dirname, '..', 'fixtures')
 const keysDir = path.join(fixturesDir, 'keys')
+const privateKeyFile = path.join(keysDir, 'privateKey.pem')
 
 describe('lib/common', () => {
   describe('#exportPrivateKey()', () => {
@@ -39,12 +40,12 @@ describe('lib/common', () => {
       const privateKey = this.keyPair.privateKey
       const privateKeyData = common.exportPrivateKey(privateKey)
 
-      await common.writeKeyToFile(keysDir, privateKeyData)
-      const privateKeyData1 = await fs.promises.readFile(path.join(keysDir, 'privateKey.pem'), 'utf8')
+      await common.writeKeyToFile(privateKeyFile, privateKeyData)
+      const privateKeyData1 = await fs.promises.readFile(privateKeyFile, 'utf8')
       const privateKey1 = common.importPrivateKey(privateKeyData1)
 
-      await common.writeKeyToFile(keysDir, privateKey, 'foobar')
-      const privateKeyData2 = await fs.promises.readFile(path.join(keysDir, 'privateKey.pem'), 'utf8')
+      await common.writeKeyToFile(privateKeyFile, privateKey, 'foobar')
+      const privateKeyData2 = await fs.promises.readFile(privateKeyFile, 'utf8')
       const privateKey2 = common.importPrivateKey(privateKeyData2, 'foobar')
 
       assert.deepStrictEqual(privateKey1, privateKey2)

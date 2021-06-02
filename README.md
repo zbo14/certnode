@@ -106,7 +106,7 @@ Then open `./out/index.html` in your browser.
 
 The test suite sends HTTPS requests to Let's Encrypt (staging environment) and generates certificates.
 
-Therefore, tests *must* run from a `domain` you control, presumably on a VPS. Since `certnode` attains certificates through HTTP validation, it must run as root so it can listen on port 80. Make sure firewall rules allow this traffic.
+Therefore, tests *must* run from a `domain` you control, presumably on a VPS. Since `certnode` attains certificates through HTTP validation, it must run as root so it can listen on port 80. Make sure firewall rules allow inbound HTTP traffic.
 
 **Note:** if you run tests several times in quick succession, you may be rate-limited by Let's Encrypt.
 
