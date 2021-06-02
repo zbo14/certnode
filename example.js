@@ -33,7 +33,7 @@ const main = async () => {
 
     // Export the account keys and write them to files in a directory.
     // Account private key is encrypted with passphrase, if provided.
-    await client.exportAccountKeypair(dirname, passphrase)
+    await client.exportAccountKeyPair(dirname, passphrase)
 
     // Export private key and write it + certificate to filesystem.
     // Certificate private key is encrypted with passphrase, if provided.
