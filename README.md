@@ -41,7 +41,7 @@ const server = https.createServer({ cert: certificate, key: privateKeyData })
 
 /* register event listeners */
 
-server.listen(443, '0.0.0.0')
+server.listen(443, '0.0.0.0', () => {})
 ```
 
 ### Write account keys to filesytem
@@ -89,7 +89,7 @@ const server = https.createServer({
 
 /* register event listeners */
 
-server.listen(443, '0.0.0.0')
+server.listen(443, '0.0.0.0', () => {})
 ```
 
 ## Documentation
