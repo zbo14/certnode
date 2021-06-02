@@ -40,21 +40,15 @@ describe('lib/client', function () {
     it('exports keypair to directory', async () => {
       await this.client.exportAccountKeyPair(keysDir)
 
-      const privateKeyStats = await fs.promises.stat(privateKeyFile)
-      const publicKeyStats = await fs.promises.stat(publicKeyFile)
-
-      assert.strictEqual(privateKeyStats.mode & 0o777, common.PRIVATE_KEY_PERMISSIONS)
-      assert.strictEqual(publicKeyStats.mode & 0o777, common.PUBLIC_KEY_PERMISSIONS)
+      await fs.promises.access(privateKeyFile)
+      await fs.promises.access(publicKeyFile)
     })
 
     it('encrypts private key with passphrase', async () => {
       await this.client.exportAccountKeyPair(keysDir, 'foobar')
 
-      const privateKeyStats = await fs.promises.stat(privateKeyFile)
-      const publicKeyStats = await fs.promises.stat(publicKeyFile)
-
-      assert.strictEqual(privateKeyStats.mode & 0o777, common.PRIVATE_KEY_PERMISSIONS)
-      assert.strictEqual(publicKeyStats.mode & 0o777, common.PUBLIC_KEY_PERMISSIONS)
+      await fs.promises.access(privateKeyFile)
+      await fs.promises.access(publicKeyFile)
     })
   })
 
