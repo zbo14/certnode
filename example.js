@@ -72,7 +72,7 @@ const main = async () => {
   const anotherClient = new certnode.Client()
 
   // If you previously exported with passphrase, provide the same passphrase.
-  await anotherClient.importAccountKeyPair(dirname, passphrase)
+  await anotherClient.importAccountKeyPair(accountDir, passphrase)
   console.log('Imported account keys')
 
   /* generate certificate with `anotherClient` */
