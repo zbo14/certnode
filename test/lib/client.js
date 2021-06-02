@@ -2,12 +2,13 @@ const assert = require('assert')
 const crypto = require('crypto')
 const fs = require('fs')
 const path = require('path')
-const Client = require('../lib/client')
+const Client = require('../../lib/client')
+const common = require('../../lib/common')
 
-const fixturesDir = path.join(__dirname, 'fixtures')
+const fixturesDir = path.resolve(__dirname, '..', 'fixtures')
 const keysDir = path.join(fixturesDir, 'keys')
-const publicKeyFile = path.join(keysDir, 'publicKey.pem')
 const privateKeyFile = path.join(keysDir, 'privateKey.pem')
+const publicKeyFile = path.join(keysDir, 'publicKey.pem')
 
 describe('lib/client', function () {
   this.timeout(10e3)
@@ -22,18 +23,6 @@ describe('lib/client', function () {
 
   after(async () => {
     await fs.promises.rmdir(keysDir, { recursive: true })
-  })
-
-  describe('#generateAccountKeyPair()', () => {
-    it('generates keypair', async () => {
-      await this.client.generateAccountKeyPair()
-
-      assert(this.client.accountPublicKey instanceof crypto.KeyObject)
-      assert(this.client.accountPrivateKey instanceof crypto.KeyObject)
-
-      assert.strictEqual(this.client.accountPublicJwk.constructor.name, 'Object')
-      assert.strictEqual(this.client.accountPrivateJwk.constructor.name, 'Object')
-    })
   })
 
   describe('#exportAccountKeyPair()', () => {
@@ -51,15 +40,21 @@ describe('lib/client', function () {
     it('exports keypair to directory', async () => {
       await this.client.exportAccountKeyPair(keysDir)
 
-      await fs.promises.access(publicKeyFile, fs.constants.F_OK)
-      await fs.promises.access(privateKeyFile, fs.constants.F_OK)
+      const privateKeyStats = await fs.promises.stat(privateKeyFile)
+      const publicKeyStats = await fs.promises.stat(publicKeyFile)
+
+      assert.strictEqual(privateKeyStats.mode & 0o777, common.PRIVATE_KEY_PERMISSIONS)
+      assert.strictEqual(publicKeyStats.mode & 0o777, common.PUBLIC_KEY_PERMISSIONS)
     })
 
     it('encrypts private key with passphrase', async () => {
       await this.client.exportAccountKeyPair(keysDir, 'foobar')
 
-      await fs.promises.access(publicKeyFile, fs.constants.F_OK)
-      await fs.promises.access(privateKeyFile, fs.constants.F_OK)
+      const privateKeyStats = await fs.promises.stat(privateKeyFile)
+      const publicKeyStats = await fs.promises.stat(publicKeyFile)
+
+      assert.strictEqual(privateKeyStats.mode & 0o777, common.PRIVATE_KEY_PERMISSIONS)
+      assert.strictEqual(publicKeyStats.mode & 0o777, common.PUBLIC_KEY_PERMISSIONS)
     })
   })
 
@@ -316,6 +311,10 @@ describe('lib/client', function () {
   })
 
   describe('#generateCertificate()', () => {
+    beforeEach(async () => {
+      await this.client.generateAccountKeyPair()
+    })
+
     it('generates certificate given domain and email address', async () => {
       const result = await this.client.generateCertificate(process.env.domain, 'foo@bar.com')
 

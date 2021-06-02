@@ -36,30 +36,28 @@ await client.generateAccountKeyPair()
 ### Generate certificate for HTTPS server
 
 ```js
-const { certificate, privateKey } = await client.generateCertificate('<domain>', '<email>')
-const server = https.createServer({ cert: certificate, key: privateKey })
+const { certificate, privateKeyData } = await client.generateCertificate('<domain>', '<email>')
+const server = https.createServer({ cert: certificate, key: privateKeyData })
 
 /* register event listeners */
 
 server.listen(443, '0.0.0.0')
 ```
 
-### Export account keys to filesytem
+### Write account keys to filesytem
 
 ```js
 // Account private key is encrypted with passphrase, if provided.
 await client.exportAccountKeypair('<directory>', '[passphrase]')
 ```
 
-### Export certificate + private key to filesystem
+### Write certificate + private key to filesystem
 
 ```js
 // Certificate private key is encrypted with passphrase, if provided.
-const privateKeyData = certnode.exportPrivateKey('[passphrase]')
-
 await Promise.all([
   fs.promises.writeFile('/path/to/certificate', certificate),
-  fs.promises.writeFile('/path/to/privateKey', privateKeyData)
+  certnode.writeKeyToFile('/path/to/privateKey', privateKeyData, '[passphrase]')
 ])
 ```
 
@@ -83,8 +81,11 @@ const [certificate, privateKeyData] = await Promise.all([
 ])
 
 // If you previously exported with passphrase, provide the same passphrase.
-const privateKey = certnode.importPrivateKey(privateKeyData, '[passphrase]')
-const server = https.createServer({ cert: certificate, key: privateKey })
+const server = https.createServer({
+  cert: certificate,
+  key: privateKeyData,
+  passphrase: '[passphrase]'
+})
 
 /* register event listeners */
 

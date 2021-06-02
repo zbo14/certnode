@@ -1,4 +1,4 @@
-const certnode = require('./lib')
+const certnode = require('certnode')
 const fs = require('fs')
 const https = require('https')
 
@@ -11,8 +11,8 @@ const main = async () => {
   {
     // Generate privateKey and certificate for `domain` with `email` address.
     // Then, initialize HTTPS server with the credentials.
-    const { certificate, privateKey } = await client.generateCertificate('<domain>', '<email>')
-    const server = https.createServer({ cert: certificate, key: privateKey })
+    const { certificate, privateKeyData } = await client.generateCertificate('<domain>', '<email>')
+    const server = https.createServer({ cert: certificate, key: privateKeyData })
 
     /* register event listeners */
 
@@ -24,16 +24,16 @@ const main = async () => {
 
     // Export private key and write it + certificate to filesystem.
     // Certificate private key is encrypted with passphrase, if provided.
-    const privateKeyData = certnode.exportPrivateKey('[passphrase]')
-
     await Promise.all([
       fs.promises.writeFile('/path/to/certificate', certificate),
-      fs.promises.writeFile('/path/to/privateKey', privateKeyData)
+      certnode.writeKeyToFile('/path/to/privateKey', privateKeyData, '[passphrase]')
     ])
   }
 
   // Later: create another client for same account
   const anotherClient = new certnode.Client()
+
+  // If you previously exported with passphrase, provide the same passphrase.
   await anotherClient.importAccountKeyPair('<directory>', '[passphrase]')
 
   /* generate certificate with `anotherClient` */
@@ -44,9 +44,12 @@ const main = async () => {
     fs.promises.readFile('/path/to/privateKey', 'utf8')
   ])
 
-  // If you previously exported with passphrase, provide the same passprhase.
-  const privateKey = certnode.importPrivateKey(privateKeyData, '[passphrase]')
-  const server = https.createServer({ cert: certificate, key: privateKey })
+  // If you previously exported with passphrase, provide the same passphrase.
+  const server = https.createServer({
+    cert: certificate,
+    key: privateKeyData,
+    passphrase: '[passphrase]'
+  })
 
   /* register event listeners */
 

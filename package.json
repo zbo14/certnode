@@ -6,7 +6,7 @@
   "scripts": {
     "doc": "jsdoc README.md lib/**",
     "lint": "eslint example.js lib/ test/",
-    "test": "NODE_ENV=test nyc mocha --exit"
+    "test": "NODE_ENV=test nyc mocha --recursive --exit"
   },
   "keywords": [
     "ACME",
