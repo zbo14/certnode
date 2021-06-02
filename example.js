@@ -11,7 +11,6 @@ const {
 } = process.env
 
 const certificateFile = path.join(dirname, 'certificate.pem')
-const privateKeyFile = path.join(dirname, 'privateKey.pem')
 
 const main = async () => {
   await fs.promises.mkdir(dirname).catch(() => {})
@@ -39,7 +38,7 @@ const main = async () => {
     // Certificate private key is encrypted with passphrase, if provided.
     await Promise.all([
       fs.promises.writeFile(certificateFile, certificate),
-      certnode.writeKeyToFile(privateKeyFile, privateKeyData, passphrase)
+      certnode.writeKeyToFile(dirname, privateKeyData, passphrase)
     ])
   }
 
@@ -54,7 +53,7 @@ const main = async () => {
   // Later: import private key and certificate and initialize HTTPS server with them.
   const [certificate, privateKeyData] = await Promise.all([
     fs.promises.readFile(certificateFile, 'utf8'),
-    fs.promises.readFile(privateKeyFile, 'utf8')
+    fs.promises.readFile(dirname, 'utf8')
   ])
 
   // If you previously exported with passphrase, provide the same passphrase.
