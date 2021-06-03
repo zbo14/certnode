@@ -2,6 +2,7 @@ const assert = require('assert')
 const crypto = require('crypto')
 const fs = require('fs')
 const path = require('path')
+const fakeTimers = require('@sinonjs/fake-timers')
 const Client = require('../../lib/client')
 const common = require('../../lib/common')
 
@@ -19,10 +20,15 @@ describe('lib/client', function () {
 
   beforeEach(() => {
     this.client = new Client()
+    this.clock = fakeTimers.install()
   })
 
   after(async () => {
     await fs.promises.rmdir(keysDir, { recursive: true })
+  })
+
+  afterEach(() => {
+    this.clock.uninstall()
   })
 
   describe('#exportAccountKeyPair()', () => {
@@ -262,6 +268,22 @@ describe('lib/client', function () {
       assert.strictEqual(typeof result.challenge.validated, 'string')
       assert.strictEqual(result.domain, process.env.domain)
       assert.strictEqual(result.status, 'valid')
+    })
+
+    it('completes a challenge', async () => {
+      const { authzUrls } = await this.client.newOrder('potato.com')
+      const { challenge } = await this.client.authz(authzUrls[0])
+      await this.client.completeChallenge(challenge)
+      const promise = this.client.pollAuthz(authzUrls[0])
+
+      this.clock.tick(10e3)
+
+      try {
+        await promise
+        assert.fail('Should reject')
+      } catch ({ message }) {
+        assert.strictEqual(message, 'Timed out waiting for server request')
+      }
     })
   })
 

@@ -28,6 +28,7 @@
     "pem": "^1.14.4"
   },
   "devDependencies": {
+    "@sinonjs/fake-timers": "^7.1.2",
     "eslint": "^7.27.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.23.3",

@@ -16,7 +16,7 @@ This was primarily a learning exercise but also an effort to create a package th
 
 ## Usage
 
-The following example code can be found [here](./example.js).
+The example code can be found [here](./example.js).
 
 **Note:** you *must* control the domain + email address you pass to `client.generateCertificate()`. Also, be sure to allow inbound HTTP traffic (TCP, port 80) in your firewall rules.
 
