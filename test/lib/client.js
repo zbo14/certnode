@@ -270,11 +270,10 @@ describe('lib/client', function () {
       assert.strictEqual(result.status, 'valid')
     })
 
-    it('completes a challenge', async () => {
+    it('times out after 10s', async () => {
       const { authzUrls } = await this.client.newOrder('potato.com')
       const { challenge } = await this.client.authz(authzUrls[0])
-      await this.client.completeChallenge(challenge)
-      const promise = this.client.pollAuthz(authzUrls[0])
+      const promise = this.client.completeChallenge(challenge)
 
       this.clock.tick(10e3)
 
