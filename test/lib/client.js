@@ -273,12 +273,12 @@ describe('lib/client', function () {
     it('times out after 10s', async () => {
       const { authzUrls } = await this.client.newOrder('potato.com')
       const { challenge } = await this.client.authz(authzUrls[0])
-      const promise = this.client.completeChallenge(challenge)
-
-      this.clock.tick(10e3)
 
       try {
-        await promise
+        await this.client.completeChallenge(challenge, () => {
+          this.clock.tick(10e3)
+        })
+
         assert.fail('Should reject')
       } catch ({ message }) {
         assert.strictEqual(message, 'Timed out waiting for server request')
