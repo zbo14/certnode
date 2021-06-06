@@ -2,7 +2,7 @@ const assert = require('assert')
 const fakeTimers = require('@sinonjs/fake-timers')
 const request = require('../../lib/request')
 
-describe.only('lib/request', () => {
+describe('lib/request', () => {
   beforeEach(() => {
     this.clock = fakeTimers.install()
   })

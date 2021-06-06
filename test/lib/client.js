@@ -20,15 +20,10 @@ describe('lib/client', function () {
 
   beforeEach(() => {
     this.client = new Client()
-    this.clock = fakeTimers.install()
   })
 
   after(async () => {
     await fs.promises.rmdir(keysDir, { recursive: true })
-  })
-
-  afterEach(() => {
-    this.clock.uninstall()
   })
 
   describe('#exportAccountKeyPair()', () => {
@@ -271,17 +266,20 @@ describe('lib/client', function () {
     })
 
     it('times out after 10s', async () => {
+      const clock = fakeTimers.install()
       const { authzUrls } = await this.client.newOrder('potato.com')
       const { challenge } = await this.client.authz(authzUrls[0])
 
       try {
         await this.client.completeChallenge(challenge, () => {
-          this.clock.tick(10e3)
+          clock.tick(10e3)
         })
 
         assert.fail('Should reject')
       } catch ({ message }) {
         assert.strictEqual(message, 'Timed out waiting for server request')
+      } finally {
+        clock.uninstall()
       }
     })
   })
